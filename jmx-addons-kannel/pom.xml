@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>jmx-addons</artifactId>
+        <groupId>org.adeptnet.jmx.addons</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>jmx-addons-kannel</artifactId>
+    <description>AdeptNet JMX Addons Kannel</description>
+    <packaging>bundle</packaging>
+
+    <name>jmx-addons-kannel OSGi Bundle</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <type>jar</type>
+            <version>0.6.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>org.adeptnet.jmx.addons.kannel.Activator</Bundle-Activator>
+                        <Export-Package />
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.3</version>
+                <executions>
+                    <execution>
+                        <id>generate-xsd-object-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <npa>true</npa>
+                            <extension>true</extension>
+                            <noHeader>true</noHeader>
+                            <strict>true</strict>
+                            <extension>true</extension>
+                            <enableIntrospection>true</enableIntrospection>
+                            <clearOutputDir>true</clearOutputDir>
+                            <schemaDirectory>${project.basedir}/src/main/resources/META-INF/kannel/</schemaDirectory>
+                            <bindingDirectory>${project.basedir}/src/main/resources/META-INF/kannel/</bindingDirectory>
+                            <generateDirectory>${project.build.directory}/generated-sources/kannel</generateDirectory>
+                            <args>
+                                <arg>-npa</arg>
+                                <arg>-no-header</arg>
+                                <arg>-xmlschema</arg>
+                                <arg>-Xannotate</arg>
+                                <arg>-Xinject-code</arg>
+                                <arg>-XtoString</arg>
+                                <arg>-Xfluent-api</arg>
+                                <!--<arg>-Xcopyable</arg>-->
+                            </args>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics</artifactId>
+                                    <version>0.6.5</version>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics-annotate</artifactId>
+                                    <version>0.6.5</version>
+                                </plugin>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-fluent-api</artifactId>
+                                    <version>3.0</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics-annotate</artifactId>
+                        <version>0.6.5</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>

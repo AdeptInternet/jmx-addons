@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxb:bindings
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:basic="http://jaxb2-commons.dev.java.net/basic"
+    xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector"
+    xmlns:copyable="http://jaxb2-commons.dev.java.net/basic/copyable"
+    xmlns:equals="http://jaxb2-commons.dev.java.net/basic/equals"
+    xmlns:hashCode="http://jaxb2-commons.dev.java.net/basic/hashCode"
+    xmlns:mergeable="http://jaxb2-commons.dev.java.net/basic/mergeable"
+    xmlns:toString="http://jaxb2-commons.dev.java.net/basic/toString"
+    xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+    xmlns:annox="http://annox.dev.java.net"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb ../jaxb/bindingschema_2_0.xsd"
+    jaxb:extensionBindingPrefixes="basic xjc ci annox"
+    version="2.1"
+>
+ 
+    <jaxb:globalBindings generateIsSetMethod="true" >
+        <jaxb:serializable uid="201401010001"/>
+    </jaxb:globalBindings>
+
+    <jaxb:bindings schemaLocation="kannel-1.0.xsd" >
+        <jaxb:schemaBindings >
+            <jaxb:package name="org.adeptnet.jmx.addons.kannel.xml">
+            </jaxb:package>
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="kannel-1.0.xsd" node="//xs:complexType[@name='gateway']" >
+        <annox:annotate>
+            <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="gateway" namespace="urn:ietf:params:xml:ns:kannel-1.0"/>
+        </annox:annotate>
+        <jaxb:class name="Gateway" />
+    </jaxb:bindings>
+
+</jaxb:bindings>
