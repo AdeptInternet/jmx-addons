@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Francois Steyn - Adept Internet (PTY) LTD <francois.s@adept.co.za>.
+ * Copyright 2014 Francois Steyn - Adept Internet (PTY) LTD (francois.s@adept.co.za).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  *
- * @author Francois Steyn - Adept Internet (PTY) LTD <francois.s@adept.co.za>
+ * @author Francois Steyn - Adept Internet (PTY) LTD (francois.s@adept.co.za)
  */
 public class Bean implements BeanInterface {
 
