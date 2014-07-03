@@ -16,8 +16,11 @@
 package org.adeptnet.jmx.addons.snmp;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.snmp.SnmpEndpoint;
@@ -40,6 +43,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  */
 public class Bean implements BeanInterface {
 
+    private static final Logger LOG = Logger.getLogger(Activator.class.getName());
     private PDU pdu;
     final private CamelContext context;
 
@@ -49,6 +53,15 @@ public class Bean implements BeanInterface {
 
     @Override
     public void loadFromURL(final String url) throws IOException {
+        loadFromURLInternal(url, false);
+    }
+
+    @Override
+    public void loadFromURLDebug(final String url) throws IOException {
+        loadFromURLInternal(url, true);
+    }
+
+    public void loadFromURLInternal(final String url, final boolean debug) throws IOException {
         pdu = null;
         final Endpoint _endpoint = context.getEndpoint(url);
 
@@ -90,6 +103,9 @@ public class Bean implements BeanInterface {
             transport.listen();
             final ResponseEvent event = snmp.send(_pdu, target, null);
             pdu = event.getResponse();
+            if (debug) {
+                LOG.log(Level.INFO, MessageFormat.format("URL: {0} Map: {1}", url, asMap()));
+            }
         } finally {
             transport.close();
         }
@@ -98,7 +114,7 @@ public class Bean implements BeanInterface {
     @Override
     public String asString(final String oid) {
         if (pdu == null) {
-            return null;
+            throw new java.lang.NullPointerException("pdu is NULL, call loadFromURL()");
         }
         return pdu.getVariable(new OID(oid)).toString();
     }

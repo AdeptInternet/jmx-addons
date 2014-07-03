@@ -48,6 +48,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-SymbolicName>adeptnet-${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Description>AdeptNet ${project.description}</Bundle-Description>
                         <Bundle-Activator>org.adeptnet.jmx.addons.kannel.Activator</Bundle-Activator>
                         <Export-Package />
                     </instructions>

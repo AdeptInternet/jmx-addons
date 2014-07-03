@@ -26,6 +26,8 @@ public interface BeanInterface {
 
     public void loadFromURL(final String url) throws IOException;
 
+    public void loadFromURLDebug(final String url) throws IOException;
+
     public String asString(final String oid);
 
     public int asInt(final String oid);
