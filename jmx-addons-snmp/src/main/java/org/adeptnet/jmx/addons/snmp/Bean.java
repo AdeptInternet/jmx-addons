@@ -104,7 +104,8 @@ public class Bean implements BeanInterface {
             final ResponseEvent event = snmp.send(_pdu, target, null);
             pdu = event.getResponse();
             if (debug) {
-                LOG.log(Level.INFO, MessageFormat.format("URL: {0} Map: {1}", url, asMap()));
+                LOG.log(Level.INFO, MessageFormat.format("URL: {0}", url));
+                LOG.log(Level.INFO, MessageFormat.format("Map: {1}", asMap()));
             }
         } finally {
             transport.close();
