@@ -105,7 +105,7 @@ public class Bean implements BeanInterface {
             pdu = event.getResponse();
             if (debug) {
                 LOG.log(Level.INFO, MessageFormat.format("URL: {0}", url));
-                LOG.log(Level.INFO, MessageFormat.format("Map: {1}", asMap()));
+                LOG.log(Level.INFO, MessageFormat.format("Map: {0}", asMap()));
             }
         } finally {
             transport.close();
