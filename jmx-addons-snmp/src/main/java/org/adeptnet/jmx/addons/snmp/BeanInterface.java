@@ -24,16 +24,16 @@ import java.util.Map;
  */
 public interface BeanInterface {
 
-    public void loadFromURL(final String url) throws IOException;
+    public void loadFromURL(final String reference, final String url) throws IOException;
 
-    public void loadFromURLDebug(final String url) throws IOException;
+    public void loadFromURLDebug(final String reference, final String url) throws IOException;
 
-    public String asString(final String oid);
+    public String asString(final String reference, final String oid);
 
-    public int asInt(final String oid);
+    public int asInt(final String reference, final String oid);
 
-    public long asLong(final String oid);
+    public long asLong(final String reference, final String oid);
 
-    public Map<String, String> asMap();
+    public Map<String, String> asMap(final String reference);
 
 }

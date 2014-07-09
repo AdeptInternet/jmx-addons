@@ -18,6 +18,7 @@ package org.adeptnet.jmx.addons.snmp;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,25 +45,98 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 public class Bean implements BeanInterface {
 
     private static final Logger LOG = Logger.getLogger(Activator.class.getName());
-    private PDU pdu;
+    private static final BeanPDU pdus = new BeanPDU();
     final private CamelContext context;
+    private final MapThread mapThread;
+    private final Thread thread;
+
+    public static class MapThread implements Runnable {
+
+        private boolean running;
+
+        public boolean isRunning() {
+            return running;
+        }
+
+        public void setRunning(final boolean running) {
+            this.running = running;
+        }
+
+        @Override
+        public void run() {
+            long current;
+            long lastUsed;
+            BeanPDU.Record record;
+            try {
+                while (isRunning()) {
+                    synchronized (pdus) {
+                        current = System.currentTimeMillis();
+                        LOG.log(Level.FINE, "mapThread Running: {0}", pdus.getMap().size());
+                        for (Iterator<String> keys = pdus.getMap().keySet().iterator(); keys.hasNext();) {
+                            final String key = keys.next();
+                            record = pdus.getMap().get(key);
+                            lastUsed = current - record.getLastUsed();
+                            //LOG.info(String.format("%s: %d", key, lastUsed));
+                            if (lastUsed > 30 * 60 * 1000) {
+                                LOG.log(Level.INFO, "Removing old Reference: {0}", key);
+                                keys.remove();
+                            }
+                        }
+                    }
+                    Thread.sleep(60 * 1000);
+                }
+            } catch (InterruptedException ex) {
+                if (isRunning()) {
+                    LOG.log(Level.SEVERE, "mapThread", ex);
+                }
+            }
+        }
+
+    }
 
     public Bean(final CamelContext context) {
         this.context = context;
+        mapThread = new MapThread();
+        thread = new Thread(mapThread);
+        thread.setDaemon(true);
+        mapThread.setRunning(true);
+    }
+
+    public void start() {
+        thread.start();
+    }
+
+    public void stop() {
+        mapThread.setRunning(false);
+        thread.interrupt();
+    }
+
+    private BeanPDU.Record getBeanPDU(final String reference) {
+        synchronized (pdus) {
+            if (!pdus.hasRecord(reference)) {
+                throw new java.lang.NullPointerException("pdu is NULL, call loadFromURL()");
+            }
+            return pdus.getRecord(reference);
+        }
+    }
+
+    private void setBeanPDU(final String reference, final PDU pdu) {
+        synchronized (pdus) {
+            pdus.setRecord(reference, pdu);
+        }
     }
 
     @Override
-    public void loadFromURL(final String url) throws IOException {
-        loadFromURLInternal(url, false);
+    public void loadFromURL(final String reference, final String url) throws IOException {
+        loadFromURLInternal(reference, url, false);
     }
 
     @Override
-    public void loadFromURLDebug(final String url) throws IOException {
-        loadFromURLInternal(url, true);
+    public void loadFromURLDebug(final String reference, final String url) throws IOException {
+        loadFromURLInternal(reference, url, true);
     }
 
-    public void loadFromURLInternal(final String url, final boolean debug) throws IOException {
-        pdu = null;
+    public void loadFromURLInternal(final String reference, final String url, final boolean debug) throws IOException {
         final Endpoint _endpoint = context.getEndpoint(url);
 
         if (!(_endpoint instanceof SnmpEndpoint)) {
@@ -102,10 +176,11 @@ public class Bean implements BeanInterface {
 
             transport.listen();
             final ResponseEvent event = snmp.send(_pdu, target, null);
-            pdu = event.getResponse();
+            setBeanPDU(reference, event.getResponse());
+
             if (debug) {
-                LOG.log(Level.INFO, MessageFormat.format("URL: {0}", url));
-                LOG.log(Level.INFO, MessageFormat.format("Map: {0}", asMap()));
+                LOG.log(Level.INFO, MessageFormat.format("Reference: {0}, URL: {1} ", reference, url));
+                LOG.log(Level.INFO, MessageFormat.format("Map: {0}", asMap(reference)));
             }
         } finally {
             transport.close();
@@ -113,36 +188,24 @@ public class Bean implements BeanInterface {
     }
 
     @Override
-    public String asString(final String oid) {
-        if (pdu == null) {
-            throw new java.lang.NullPointerException("pdu is NULL, call loadFromURL()");
-        }
-        return pdu.getVariable(new OID(oid)).toString();
+    public String asString(final String reference, final String oid) {
+        return getBeanPDU(reference).getPdu().getVariable(new OID(oid)).toString();
     }
 
     @Override
-    public int asInt(final String oid) {
-        if (pdu == null) {
-            throw new java.lang.NullPointerException("pdu is NULL, call loadFromURL()");
-        }
-        return pdu.getVariable(new OID(oid)).toInt();
+    public int asInt(final String reference, final String oid) {
+        return getBeanPDU(reference).getPdu().getVariable(new OID(oid)).toInt();
     }
 
     @Override
-    public long asLong(final String oid) {
-        if (pdu == null) {
-            throw new java.lang.NullPointerException("pdu is NULL, call loadFromURL()");
-        }
-        return pdu.getVariable(new OID(oid)).toLong();
+    public long asLong(final String reference, final String oid) {
+        return getBeanPDU(reference).getPdu().getVariable(new OID(oid)).toLong();
     }
 
     @Override
-    public Map<String, String> asMap() {
-        if (pdu == null) {
-            throw new java.lang.NullPointerException("pdu is NULL, call loadFromURL()");
-        }
+    public Map<String, String> asMap(final String reference) {
         final Map<String, String> map = new HashMap<>();
-        for (final VariableBinding vb : pdu.toArray()) {
+        for (final VariableBinding vb : getBeanPDU(reference).getPdu().toArray()) {
             map.put(vb.getOid().toString(), vb.getVariable().toString());
         }
         return map;

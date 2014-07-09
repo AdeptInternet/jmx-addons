@@ -32,6 +32,7 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
     private static final Logger LOG = Logger.getLogger(Activator.class.getName());
+    private Bean bean;
     private MBeanServer mbs = null;
     private ObjectName name = null;
 
@@ -43,7 +44,8 @@ public class Activator implements BundleActivator {
     public void start(final BundleContext context) throws Exception {
         LOG.log(Level.INFO, "ADEPTNET Starting: {0}", Activator.class);
         mbs = ManagementFactory.getPlatformMBeanServer();
-        final Bean bean = new Bean(new OsgiDefaultCamelContext(context));
+        bean = new Bean(new OsgiDefaultCamelContext(context));
+        bean.start();
         name = new ObjectName(getObjectName(bean));
         final StandardMBean mbean = new StandardMBean(bean, BeanInterface.class, true);
         mbs.registerMBean(mbean, name);
@@ -53,6 +55,7 @@ public class Activator implements BundleActivator {
     @Override
     public void stop(final BundleContext context) throws Exception {
         LOG.log(Level.INFO, "ADEPTNET Stopping: {0}", Activator.class);
+        bean.stop();
         if (name != null) {
             mbs.unregisterMBean(name);
         }
