@@ -91,7 +91,6 @@ public class Bean implements BeanInterface {
                 }
             }
         }
-
     }
 
     public Bean(final CamelContext context) {
