@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.adeptnet.jmx.addons</groupId>
     <artifactId>jmx-addons</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <url>https://github.com/AdeptInternet/jmx-addons</url>
     <licenses>
@@ -39,6 +39,7 @@
     <modules>
         <module>jmx-addons-snmp</module>
         <module>jmx-addons-kannel</module>
+        <module>jmx-addons-mikrotik</module>
     </modules>
     <build>
         <plugins>

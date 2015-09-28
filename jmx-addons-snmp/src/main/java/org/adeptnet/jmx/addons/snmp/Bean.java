@@ -44,7 +44,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  */
 public class Bean implements BeanInterface {
 
-    private static final Logger LOG = Logger.getLogger(Activator.class.getName());
+    private static final Logger LOG = Logger.getLogger(Bean.class.getName());
     private static final BeanPDU pdus = new BeanPDU();
     final private CamelContext context;
     private final MapThread mapThread;

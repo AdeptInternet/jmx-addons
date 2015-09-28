@@ -7,15 +7,14 @@
         <version>1.2.0</version>
     </parent>
 
-    <artifactId>jmx-addons-snmp</artifactId>
-    <description>AdeptNet JMX Addons SNMP</description>
+    <artifactId>jmx-addons-mikrotik</artifactId>
+    <description>AdeptNet JMX Addons Mikrotik</description>
     <packaging>bundle</packaging>
 
-    <name>jmx-addons-snmp OSGi Bundle</name>
+    <name>jmx-addons-mikrotik OSGi Bundle</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <camel.version>2.12.3</camel.version>
     </properties>
 
     <dependencies>
@@ -26,16 +25,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-snmp</artifactId>
-            <version>${camel.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-osgi</artifactId>
-            <version>${camel.version}</version>
-            <scope>provided</scope>
+            <groupId>me.legrange</groupId>
+            <artifactId>mikrotik</artifactId>
+            <version>[2.2,)</version>
         </dependency>
     </dependencies>
 
@@ -50,11 +42,26 @@
                     <instructions>
                         <Bundle-SymbolicName>adeptnet-${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Description>AdeptNet ${project.description}</Bundle-Description>
-                        <Bundle-Activator>org.adeptnet.jmx.addons.snmp.Activator</Bundle-Activator>
+                        <Bundle-Activator>org.adeptnet.jmx.addons.mikrotik.Activator</Bundle-Activator>
                         <Export-Package />
                     </instructions>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>wrap-dependency</id>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                        <configuration>
+                            <instructions>
+                                <Embed-Dependency>*</Embed-Dependency>
+                                <Embed-Dependency>!org.osgi.core</Embed-Dependency>
+                            </instructions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
 </project>
