@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocketFactory;
 import me.legrange.mikrotik.ApiConnection;
 import me.legrange.mikrotik.MikrotikApiException;
 
@@ -112,11 +114,7 @@ public class Bean implements BeanInterface {
     }
 
     private void loadFromConnection(final String reference, final ApiConnection con, final String user, final String password, final String cmd) throws MikrotikApiException {
-        try {
-            con.login(user, password);
-        } catch (InterruptedException ex) {
-            throw new MikrotikApiException("login", ex);
-        }
+        con.login(user, password);
 
         final List<Map<String, String>> data = con.execute(cmd);
         setRecord(reference, data);
@@ -135,7 +133,7 @@ public class Bean implements BeanInterface {
     @Override
     public void loadFromAPI(final String reference, final String host, final String user, final String password, final String cmd, final int port, final int timeout) throws IOException {
         try {
-            try (final ApiConnection con = ApiConnection.connect(host, port, timeout)) {
+            try (final ApiConnection con = ApiConnection.connect(SocketFactory.getDefault(), host, port, timeout)) {
                 loadFromConnection(reference, con, user, password, cmd);
             }
         } catch (MikrotikApiException ex) {
@@ -156,7 +154,7 @@ public class Bean implements BeanInterface {
     @Override
     public void loadFromAPITLS(final String reference, final String host, final String user, final String password, final String cmd, final int port, final int timeout) throws IOException {
         try {
-            try (final ApiConnection con = ApiConnection.connectTLS(host, port, timeout)) {
+            try (final ApiConnection con = ApiConnection.connect(SSLSocketFactory.getDefault(), host, port, timeout)) {
                 loadFromConnection(reference, con, user, password, cmd);
             }
         } catch (MikrotikApiException ex) {
