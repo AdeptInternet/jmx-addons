@@ -44,13 +44,24 @@ public class BeanPDU {
         pdus.put(reference, record);
     }
 
+    public void setRecord(final String reference, final Record record) {
+        final Record r = new Record(record.getPdu(), record.getCreated()).withLastUsed();
+        pdus.put(reference, r);
+    }
+
     public class Record {
 
         private final PDU pdu;
         private long lastUsed = 0;
+        private final long created;
 
-        public Record(PDU pdu) {
+        public Record(final PDU pdu, final long created) {
             this.pdu = pdu;
+            this.created = created;
+        }
+
+        public Record(final PDU pdu) {
+            this(pdu, System.currentTimeMillis());
         }
 
         public PDU getPdu() {
@@ -64,6 +75,10 @@ public class BeanPDU {
         public Record withLastUsed() {
             lastUsed = System.currentTimeMillis();
             return this;
+        }
+
+        public long getCreated() {
+            return created;
         }
 
     }

@@ -36,4 +36,8 @@ public interface BeanInterface {
 
     public Map<String, String> asMap(final String reference);
 
+    public void backupData(final String fromReference, final String toReference);
+
+    public long backupCreatedDiff(final String fromReference, final String toReference);
+
 }

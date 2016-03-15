@@ -210,4 +210,27 @@ public class Bean implements BeanInterface {
         return map;
     }
 
+    @Override
+    public void backupData(final String fromReference, final String toReference) {
+        synchronized (pdus) {
+            if (!pdus.hasRecord(fromReference)) {
+                return;
+            }
+            pdus.setRecord(toReference, pdus.getRecord(fromReference));
+        }
+    }
+
+    @Override
+    public long backupCreatedDiff(final String fromReference, final String toReference) {
+        synchronized (pdus) {
+            if (!pdus.hasRecord(fromReference)) {
+                return 0;
+            }
+            if (!pdus.hasRecord(toReference)) {
+                return 0;
+            }
+            return pdus.getRecord(fromReference).getCreated() - pdus.getRecord(toReference).getCreated();
+        }
+    }
+
 }
